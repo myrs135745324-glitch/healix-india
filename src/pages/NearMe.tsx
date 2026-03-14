@@ -1,13 +1,33 @@
 import { useState } from "react";
 import { Search, MapPin, Navigation } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+
+// Fix default marker icons for Leaflet + bundlers
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+});
+
+const greenIcon = new L.Icon({
+  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
 
 const PHARMACIES = [
-  { id: 1, name: "Jan Aushadhi Kendra - Kukatpally", address: "Plot 42, KPHB Colony, Kukatpally", distance: "0.8 km", open: true, janAushadhi: true },
-  { id: 2, name: "Apollo Pharmacy", address: "Miyapur X Roads, Hyderabad", distance: "1.2 km", open: true, janAushadhi: false },
-  { id: 3, name: "Jan Aushadhi - Gachibowli", address: "DLF Cyber City, Gachibowli", distance: "1.5 km", open: true, janAushadhi: true },
-  { id: 4, name: "MedPlus Pharmacy", address: "Madhapur Main Road", distance: "1.8 km", open: false, janAushadhi: false },
-  { id: 5, name: "NetMeds Store", address: "Kondapur Circle", distance: "2.1 km", open: true, janAushadhi: false },
+  { id: 1, name: "Jan Aushadhi Kendra - Kukatpally", address: "Plot 42, KPHB Colony, Kukatpally", distance: "0.8 km", open: true, janAushadhi: true, lat: 17.4947, lng: 78.3996 },
+  { id: 2, name: "Apollo Pharmacy", address: "Miyapur X Roads, Hyderabad", distance: "1.2 km", open: true, janAushadhi: false, lat: 17.4969, lng: 78.3548 },
+  { id: 3, name: "Jan Aushadhi - Gachibowli", address: "DLF Cyber City, Gachibowli", distance: "1.5 km", open: true, janAushadhi: true, lat: 17.4401, lng: 78.3489 },
+  { id: 4, name: "MedPlus Pharmacy", address: "Madhapur Main Road", distance: "1.8 km", open: false, janAushadhi: false, lat: 17.4484, lng: 78.3908 },
+  { id: 5, name: "NetMeds Store", address: "Kondapur Circle", distance: "2.1 km", open: true, janAushadhi: false, lat: 17.4588, lng: 78.3726 },
 ];
 
 export default function NearMe() {
@@ -73,15 +93,22 @@ export default function NearMe() {
         ))}
       </div>
 
-      {/* Map placeholder */}
-      <div className="bg-card border border-border rounded-lg h-[300px] flex items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5" />
-        <div className="text-center z-10">
-          <MapPin className="w-12 h-12 text-primary mx-auto mb-3" />
-          <p className="text-muted-foreground font-medium">Google Maps Integration</p>
-          <p className="text-xs text-muted-foreground mt-1">Centered on Hyderabad (17.3850, 78.4867)</p>
-          <p className="text-xs text-muted-foreground">Connect API key to enable live map</p>
-        </div>
+      {/* Live Map */}
+      <div className="rounded-lg overflow-hidden border border-border h-[300px]">
+        <MapContainer center={[17.385, 78.4867]} zoom={12} scrollWheelZoom={true} style={{ height: "100%", width: "100%" }}>
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          {filteredPharmacies.map(p => (
+            <Marker key={p.id} position={[p.lat, p.lng]} icon={p.janAushadhi ? greenIcon : new L.Icon.Default()}>
+              <Popup>
+                <strong>{p.name}</strong><br />{p.address}<br />
+                <span style={{ color: p.open ? "#1D9E75" : "red" }}>{p.open ? "Open" : "Closed"}</span>
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
       </div>
 
       {/* Pharmacy list */}
