@@ -23,11 +23,11 @@ const greenIcon = new L.Icon({
 });
 
 const PHARMACIES = [
-  { id: 1, name: "Jan Aushadhi Kendra - Kukatpally", address: "Plot 42, KPHB Colony, Kukatpally", distance: "0.8 km", open: true, janAushadhi: true },
-  { id: 2, name: "Apollo Pharmacy", address: "Miyapur X Roads, Hyderabad", distance: "1.2 km", open: true, janAushadhi: false },
-  { id: 3, name: "Jan Aushadhi - Gachibowli", address: "DLF Cyber City, Gachibowli", distance: "1.5 km", open: true, janAushadhi: true },
-  { id: 4, name: "MedPlus Pharmacy", address: "Madhapur Main Road", distance: "1.8 km", open: false, janAushadhi: false },
-  { id: 5, name: "NetMeds Store", address: "Kondapur Circle", distance: "2.1 km", open: true, janAushadhi: false },
+  { id: 1, name: "Jan Aushadhi Kendra - Kukatpally", address: "Plot 42, KPHB Colony, Kukatpally", distance: "0.8 km", open: true, janAushadhi: true, lat: 17.4947, lng: 78.3996 },
+  { id: 2, name: "Apollo Pharmacy", address: "Miyapur X Roads, Hyderabad", distance: "1.2 km", open: true, janAushadhi: false, lat: 17.4969, lng: 78.3548 },
+  { id: 3, name: "Jan Aushadhi - Gachibowli", address: "DLF Cyber City, Gachibowli", distance: "1.5 km", open: true, janAushadhi: true, lat: 17.4401, lng: 78.3489 },
+  { id: 4, name: "MedPlus Pharmacy", address: "Madhapur Main Road", distance: "1.8 km", open: false, janAushadhi: false, lat: 17.4484, lng: 78.3908 },
+  { id: 5, name: "NetMeds Store", address: "Kondapur Circle", distance: "2.1 km", open: true, janAushadhi: false, lat: 17.4588, lng: 78.3726 },
 ];
 
 export default function NearMe() {
