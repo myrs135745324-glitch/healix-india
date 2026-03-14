@@ -93,15 +93,22 @@ export default function NearMe() {
         ))}
       </div>
 
-      {/* Map placeholder */}
-      <div className="bg-card border border-border rounded-lg h-[300px] flex items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5" />
-        <div className="text-center z-10">
-          <MapPin className="w-12 h-12 text-primary mx-auto mb-3" />
-          <p className="text-muted-foreground font-medium">Google Maps Integration</p>
-          <p className="text-xs text-muted-foreground mt-1">Centered on Hyderabad (17.3850, 78.4867)</p>
-          <p className="text-xs text-muted-foreground">Connect API key to enable live map</p>
-        </div>
+      {/* Live Map */}
+      <div className="rounded-lg overflow-hidden border border-border h-[300px]">
+        <MapContainer center={[17.385, 78.4867]} zoom={12} scrollWheelZoom={true} style={{ height: "100%", width: "100%" }}>
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          {filteredPharmacies.map(p => (
+            <Marker key={p.id} position={[p.lat, p.lng]} icon={p.janAushadhi ? greenIcon : new L.Icon.Default()}>
+              <Popup>
+                <strong>{p.name}</strong><br />{p.address}<br />
+                <span style={{ color: p.open ? "#1D9E75" : "red" }}>{p.open ? "Open" : "Closed"}</span>
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
       </div>
 
       {/* Pharmacy list */}
