@@ -14,7 +14,178 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      medications: {
+        Row: {
+          created_at: string | null
+          dose: string | null
+          frequency: string | null
+          id: string
+          name: string
+          reminder_time: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          dose?: string | null
+          frequency?: string | null
+          id?: string
+          name: string
+          reminder_time?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          dose?: string | null
+          frequency?: string | null
+          id?: string
+          name?: string
+          reminder_time?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          activity_level: string | null
+          age: number | null
+          allergies: string | null
+          blood_group: string | null
+          bmi: number | null
+          created_at: string | null
+          cuisine_preference: string | null
+          diet_type: string | null
+          drinking: boolean | null
+          fitness_goal: string | null
+          full_name: string | null
+          gender: string | null
+          gym_member: boolean | null
+          health_conditions: string[] | null
+          health_goals: string[] | null
+          height_cm: number | null
+          hostel_mode: boolean | null
+          id: string
+          language: string | null
+          meal_budget: string | null
+          occupation: string | null
+          onboarding_complete: boolean | null
+          pcos: boolean | null
+          period_date: string | null
+          pregnant: boolean | null
+          profile_photo_url: string | null
+          sleep_time: string | null
+          smoking: boolean | null
+          wake_time: string | null
+          weight_kg: number | null
+        }
+        Insert: {
+          activity_level?: string | null
+          age?: number | null
+          allergies?: string | null
+          blood_group?: string | null
+          bmi?: number | null
+          created_at?: string | null
+          cuisine_preference?: string | null
+          diet_type?: string | null
+          drinking?: boolean | null
+          fitness_goal?: string | null
+          full_name?: string | null
+          gender?: string | null
+          gym_member?: boolean | null
+          health_conditions?: string[] | null
+          health_goals?: string[] | null
+          height_cm?: number | null
+          hostel_mode?: boolean | null
+          id: string
+          language?: string | null
+          meal_budget?: string | null
+          occupation?: string | null
+          onboarding_complete?: boolean | null
+          pcos?: boolean | null
+          period_date?: string | null
+          pregnant?: boolean | null
+          profile_photo_url?: string | null
+          sleep_time?: string | null
+          smoking?: boolean | null
+          wake_time?: string | null
+          weight_kg?: number | null
+        }
+        Update: {
+          activity_level?: string | null
+          age?: number | null
+          allergies?: string | null
+          blood_group?: string | null
+          bmi?: number | null
+          created_at?: string | null
+          cuisine_preference?: string | null
+          diet_type?: string | null
+          drinking?: boolean | null
+          fitness_goal?: string | null
+          full_name?: string | null
+          gender?: string | null
+          gym_member?: boolean | null
+          health_conditions?: string[] | null
+          health_goals?: string[] | null
+          height_cm?: number | null
+          hostel_mode?: boolean | null
+          id?: string
+          language?: string | null
+          meal_budget?: string | null
+          occupation?: string | null
+          onboarding_complete?: boolean | null
+          pcos?: boolean | null
+          period_date?: string | null
+          pregnant?: boolean | null
+          profile_photo_url?: string | null
+          sleep_time?: string | null
+          smoking?: boolean | null
+          wake_time?: string | null
+          weight_kg?: number | null
+        }
+        Relationships: []
+      }
+      reminders: {
+        Row: {
+          created_at: string | null
+          enabled: boolean | null
+          id: string
+          time: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          enabled?: boolean | null
+          id?: string
+          time?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          enabled?: boolean | null
+          id?: string
+          time?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reminders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
