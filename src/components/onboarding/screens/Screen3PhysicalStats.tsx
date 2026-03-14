@@ -1,9 +1,10 @@
 import { useOnboarding } from "@/contexts/OnboardingContext";
-import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import NavButtons from "../NavButtons";
+import FieldError from "../FieldError";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useFieldValidation } from "@/hooks/useFieldValidation";
 
 const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
 
@@ -23,7 +24,11 @@ function bmiMessage(bmi: number) {
 
 export default function Screen3PhysicalStats() {
   const { data, updateData, setStep } = useOnboarding();
-  const { toast } = useToast();
+
+  const { errors, validateAll, clearError } = useFieldValidation({
+    height: { required: true, label: "Height", min: 50, max: 300 },
+    weight: { required: true, label: "Weight", min: 10, max: 500 },
+  });
 
   const h = parseFloat(data.height);
   const w = parseFloat(data.weight);
@@ -33,10 +38,10 @@ export default function Screen3PhysicalStats() {
     updateData({ bmi: bmi.toFixed(1) });
   }
 
-  const validate = () => {
-    if (!data.height || h <= 0) { toast({ title: "Valid height required", variant: "destructive" }); return false; }
-    if (!data.weight || w <= 0) { toast({ title: "Valid weight required", variant: "destructive" }); return false; }
-    return true;
+  const handleNext = () => {
+    if (validateAll({ height: data.height, weight: data.weight })) {
+      setStep(4);
+    }
   };
 
   const cat = bmi ? bmiCategory(bmi) : null;
@@ -48,11 +53,25 @@ export default function Screen3PhysicalStats() {
       <div className="space-y-4">
         <div>
           <label className="text-sm font-medium text-foreground mb-1 block">Height (cm) *</label>
-          <Input type="number" value={data.height} onChange={e => updateData({ height: e.target.value })} placeholder="e.g. 170" />
+          <Input
+            type="number"
+            value={data.height}
+            onChange={e => { updateData({ height: e.target.value }); clearError("height"); }}
+            placeholder="e.g. 170"
+            className={errors.height ? "border-destructive" : ""}
+          />
+          <FieldError message={errors.height} />
         </div>
         <div>
           <label className="text-sm font-medium text-foreground mb-1 block">Weight (kg) *</label>
-          <Input type="number" value={data.weight} onChange={e => updateData({ weight: e.target.value })} placeholder="e.g. 65" />
+          <Input
+            type="number"
+            value={data.weight}
+            onChange={e => { updateData({ weight: e.target.value }); clearError("weight"); }}
+            placeholder="e.g. 65"
+            className={errors.weight ? "border-destructive" : ""}
+          />
+          <FieldError message={errors.weight} />
         </div>
         <div>
           <label className="text-sm font-medium text-foreground mb-1 block">Blood Group</label>
@@ -83,7 +102,7 @@ export default function Screen3PhysicalStats() {
         )}
       </AnimatePresence>
 
-      <NavButtons onNext={() => { if (validate()) setStep(4); }} />
+      <NavButtons onNext={handleNext} />
     </div>
   );
 }

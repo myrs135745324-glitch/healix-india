@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
+import { useOnboardingSync } from "@/hooks/useOnboardingSync";
 
 export interface Medication {
   name: string;
@@ -99,11 +100,12 @@ interface OnboardingContextType {
   step: number;
   setStep: (s: number) => void;
   totalSteps: number;
+  saving: boolean;
 }
 
 const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
 
-export function OnboardingProvider({ children }: { children: ReactNode }) {
+function OnboardingProviderInner({ children }: { children: ReactNode }) {
   const [data, setData] = useState<OnboardingData>(defaultData);
   const [step, setStep] = useState(1);
 
@@ -113,11 +115,17 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
 
   const totalSteps = 12;
 
+  const { saveProgress } = useOnboardingSync(data, updateData, step);
+
   return (
-    <OnboardingContext.Provider value={{ data, updateData, step, setStep, totalSteps }}>
+    <OnboardingContext.Provider value={{ data, updateData, step, setStep, totalSteps, saving: false }}>
       {children}
     </OnboardingContext.Provider>
   );
+}
+
+export function OnboardingProvider({ children }: { children: ReactNode }) {
+  return <OnboardingProviderInner>{children}</OnboardingProviderInner>;
 }
 
 export function useOnboarding() {
