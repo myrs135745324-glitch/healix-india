@@ -5,12 +5,20 @@ import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import ChipSelect from "../ChipSelect";
 import NavButtons from "../NavButtons";
+import FieldError from "../FieldError";
 import { Camera, User } from "lucide-react";
+import { useFieldValidation } from "@/hooks/useFieldValidation";
 
 export default function Screen2Identity() {
   const { data, updateData, setStep } = useOnboarding();
   const { toast } = useToast();
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const { errors, validateAll, clearError } = useFieldValidation({
+    fullName: { required: true, label: "Full name", minLength: 2 },
+    age: { required: true, label: "Age", min: 1, max: 120 },
+    gender: { required: true, label: "Gender" },
+  });
 
   const handlePhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -18,11 +26,10 @@ export default function Screen2Identity() {
     updateData({ profilePhoto: file, profilePhotoUrl: URL.createObjectURL(file) });
   };
 
-  const validate = () => {
-    if (!data.fullName.trim()) { toast({ title: "Name is required", variant: "destructive" }); return false; }
-    if (!data.age || parseInt(data.age) < 1) { toast({ title: "Valid age is required", variant: "destructive" }); return false; }
-    if (!data.gender) { toast({ title: "Please select gender", variant: "destructive" }); return false; }
-    return true;
+  const handleNext = () => {
+    if (validateAll({ fullName: data.fullName, age: data.age, gender: data.gender })) {
+      setStep(3);
+    }
   };
 
   return (
@@ -47,15 +54,29 @@ export default function Screen2Identity() {
       <div className="space-y-4">
         <div>
           <label className="text-sm font-medium text-foreground mb-1 block">Full Name *</label>
-          <Input value={data.fullName} onChange={e => updateData({ fullName: e.target.value })} placeholder="Enter your name" />
+          <Input
+            value={data.fullName}
+            onChange={e => { updateData({ fullName: e.target.value }); clearError("fullName"); }}
+            placeholder="Enter your name"
+            className={errors.fullName ? "border-destructive" : ""}
+          />
+          <FieldError message={errors.fullName} />
         </div>
         <div>
           <label className="text-sm font-medium text-foreground mb-1 block">Age *</label>
-          <Input type="number" value={data.age} onChange={e => updateData({ age: e.target.value })} placeholder="Your age" />
+          <Input
+            type="number"
+            value={data.age}
+            onChange={e => { updateData({ age: e.target.value }); clearError("age"); }}
+            placeholder="Your age"
+            className={errors.age ? "border-destructive" : ""}
+          />
+          <FieldError message={errors.age} />
         </div>
         <div>
           <label className="text-sm font-medium text-foreground mb-2 block">Gender *</label>
-          <ChipSelect options={["Male", "Female", "Other"]} selected={data.gender} onSelect={v => updateData({ gender: v })} />
+          <ChipSelect options={["Male", "Female", "Other"]} selected={data.gender} onSelect={v => { updateData({ gender: v }); clearError("gender"); }} />
+          <FieldError message={errors.gender} />
         </div>
         <div>
           <label className="text-sm font-medium text-foreground mb-2 block">Language</label>
@@ -63,7 +84,7 @@ export default function Screen2Identity() {
         </div>
       </div>
 
-      <NavButtons onNext={() => { if (validate()) setStep(3); }} />
+      <NavButtons onNext={handleNext} />
     </div>
   );
 }
